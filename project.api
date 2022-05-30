@@ -1,0 +1,72 @@
+#
+!maze.cpp algorithm cctype cerrno clocale cstdint cstdio cstdlib cstring ctime ctype.h cwchar cwctype deque errno.h exception graphics.h initializer_list ios iosfwd iostream istream keys_n_colors.h limits limits.h locale.h new ostream signal.h stack stddef.h stdexcept stdint.h stdio.h stdlib.h streambuf string string.h string_view system_error time.h type_traits typeinfo utility wchar.h wctype.h #<#>
+WIDTH : const int #<maze.cpp>
+abilities : IMAGE*[] #<maze.cpp>
+buffer : char[] #<maze.cpp>
+c : cellstruct[][] #<maze.cpp>
+cellStack : stack #<maze.cpp>
+cellstruct _type_ #<maze.cpp>
+clearMaze() -> void #<maze.cpp>
+coinTexture : IMAGE* #<maze.cpp>
+collectedCoins : int #<maze.cpp>
+computerAbility : int #<maze.cpp>
+correctPath : bool[][] #<maze.cpp>
+createLevel() -> void #<maze.cpp>
+currX : inteY=SIDE-2;int #<maze.cpp>
+currY : int #<maze.cpp>
+defeatScreen : const int* #<maze.cpp>
+defeatedEnemies : int #<maze.cpp>
+displayCounters() -> void #<maze.cpp>
+drawInFight() -> void #<maze.cpp>
+drawMaze() -> void #<maze.cpp>
+drawPlayer(int x, int y) -> void #<maze.cpp>
+drawSolution() -> void #<maze.cpp>
+dx : int[] #<maze.cpp>
+dy : int[] #<maze.cpp>
+eX : int #<maze.cpp>
+enemyTexture : IMAGE* #<maze.cpp>
+erasePlayer(int x, int y) -> void #<maze.cpp>
+exitTexture : IMAGE* #<maze.cpp>
+fight(int playerAbility, int computerAbility) -> void #<maze.cpp>
+fightWindow : const int* #<maze.cpp>
+finalPosX : int #<maze.cpp>
+finalPosY : int #<maze.cpp>
+floorTexture : IMAGE* #<maze.cpp>
+foundAnEnemy() -> void #<maze.cpp>
+foundCoin() -> void #<maze.cpp>
+gameProcess() -> void #<maze.cpp>
+gameWindow : const int* #<maze.cpp>
+generateMaze() -> void #<maze.cpp>
+getNeighbours(int x, int y) -> int #<maze.cpp>
+informationWindow : const int* #<maze.cpp>
+initialPosX : int #<maze.cpp>
+initialPosY : int #<maze.cpp>
+initializeGame() -> void #<maze.cpp>
+isGameGoingOn : bool #<maze.cpp>
+isNewGame : bool #<maze.cpp>
+loadFiles() -> void #<maze.cpp>
+lostInFight() -> void #<maze.cpp>
+main() -> int #<maze.cpp>
+mainMenu : const intHEIGHT=600;const int SIDE=40;IMAGE* #<maze.cpp>
+menuButtons(int currentStatus) -> int #<maze.cpp>
+menuStatus : int #<maze.cpp>
+omtScreen : const int* #<maze.cpp>
+playerPathTexture : IMAGE* #<maze.cpp>
+playerTexture : IMAGE* #<maze.cpp>
+recursiveSolve(int x, int y) -> bool #<maze.cpp>
+restorePath() -> void #<maze.cpp>
+rulesWindow : const int* #<maze.cpp>
+showAbout() -> void #<maze.cpp>
+showRules() -> void #<maze.cpp>
+solutionPathCoin : IMAGE* #<maze.cpp>
+solutionPathEnemy : IMAGE* #<maze.cpp>
+traceCell(int dir) -> void #<maze.cpp>
+victoryScreen : const int* #<maze.cpp>
+wallTexture : IMAGE* #<maze.cpp>
+wasHere : bool[][] #<maze.cpp>
+wonInFight() -> void #<maze.cpp>
+	cellstruct::visited : bool #<maze.cpp>
+	cellstruct::isWall : bool #<maze.cpp>
+	cellstruct::visitedByPlayer : bool #<maze.cpp>
+	cellstruct::isCoin : bool #<maze.cpp>
+	cellstruct::isEnemy : bool #<maze.cpp>
