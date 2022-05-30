@@ -1,43 +1,42 @@
 #include <iostream>
 #include <stack>
-#include <cstring>
 #include <ctime>
 #include <algorithm>
 #include "graphics.h"
 
 using namespace std;
 
-const int WIDTH = 800, HEIGHT = 600; // Ширина  и высота  окна приложения
-const int SIDE = 40;  //Количестве ячеек в лабиринте
+const int WIDTH = 800, HEIGHT = 600; // ГГЁГ°ГЁГ­Г   ГЁ ГўГ»Г±Г®ГІГ   Г®ГЄГ­Г  ГЇГ°ГЁГ«Г®Г¦ГҐГ­ГЁГї
+const int SIDE = 40;  //ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГҐ ГїГ·ГҐГҐГЄ Гў Г«Г ГЎГЁГ°ГЁГ­ГІГҐ
 
 IMAGE *mainMenu, *gameWindow, *rulesWindow, *informationWindow, *fightWindow, *victoryScreen, *defeatScreen, *omtScreen;
 IMAGE *wallTexture, *floorTexture, *playerPathTexture, *solutionPathCoin, *solutionPathEnemy, *exitTexture, *playerTexture, *enemyTexture, *coinTexture, *abilities[3];
 
 struct cellstruct
 {
-   bool visited = 0; // Посещена ли ячейка алгоритмом генерации лабиринта
-   bool isWall = 1; // Стеной или дорогой является ячейка после работы алгоритма генерации лабиринта
-   bool visitedByPlayer = 0; // Посещена ли ячейка игроком во время прохождения лабиринта
-   bool isCoin = 0; // Есть ли монета в ячейке
-   bool isEnemy = 0; // Есть ли враг в ячейке
+   bool visited = 0; // ГЏГ®Г±ГҐГ№ГҐГ­Г  Г«ГЁ ГїГ·ГҐГ©ГЄГ  Г Г«ГЈГ®Г°ГЁГІГ¬Г®Г¬ ГЈГҐГ­ГҐГ°Г Г¶ГЁГЁ Г«Г ГЎГЁГ°ГЁГ­ГІГ 
+   bool isWall = 1; // Г‘ГІГҐГ­Г®Г© ГЁГ«ГЁ Г¤Г®Г°Г®ГЈГ®Г© ГїГўГ«ГїГҐГІГ±Гї ГїГ·ГҐГ©ГЄГ  ГЇГ®Г±Г«ГҐ Г°Г ГЎГ®ГІГ» Г Г«ГЈГ®Г°ГЁГІГ¬Г  ГЈГҐГ­ГҐГ°Г Г¶ГЁГЁ Г«Г ГЎГЁГ°ГЁГ­ГІГ 
+   bool visitedByPlayer = 0; // ГЏГ®Г±ГҐГ№ГҐГ­Г  Г«ГЁ ГїГ·ГҐГ©ГЄГ  ГЁГЈГ°Г®ГЄГ®Г¬ ГўГ® ГўГ°ГҐГ¬Гї ГЇГ°Г®ГµГ®Г¦Г¤ГҐГ­ГЁГї Г«Г ГЎГЁГ°ГЁГ­ГІГ 
+   bool isCoin = 0; // Г…Г±ГІГј Г«ГЁ Г¬Г®Г­ГҐГІГ  Гў ГїГ·ГҐГ©ГЄГҐ
+   bool isEnemy = 0; // Г…Г±ГІГј Г«ГЁ ГўГ°Г ГЈ Гў ГїГ·ГҐГ©ГЄГҐ
 };
 
-cellstruct c[SIDE][SIDE]; // Поле ячеек размером SIDE*SIDE
-stack <pair<int, int> > cellStack; // Список координат, хранящий посещенные ячейки в процессе генерации лабиринта
+cellstruct c[SIDE][SIDE]; // ГЏГ®Г«ГҐ ГїГ·ГҐГҐГЄ Г°Г Г§Г¬ГҐГ°Г®Г¬ SIDE*SIDE
+stack <pair<int, int> > cellStack; // Г‘ГЇГЁГ±Г®ГЄ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІ, ГµГ°Г Г­ГїГ№ГЁГ© ГЇГ®Г±ГҐГ№ГҐГ­Г­Г»ГҐ ГїГ·ГҐГ©ГЄГЁ Гў ГЇГ°Г®Г¶ГҐГ±Г±ГҐ ГЈГҐГ­ГҐГ°Г Г¶ГЁГЁ Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 
-int eX = SIDE - 2, eY = SIDE - 2; //  Позиция ячейки-финиша
-int currX, currY; // Положения игрока в процессе игры
-int computerAbility; // Способность компьютера в мини-игре (выбирается случайным образом)
-int menuStatus; // В каком пункте меню находится пользователь
-int collectedCoins, defeatedEnemies; // Количество собранных монет; Количество поверженных врагов
-int initialPosX, initialPosY, finalPosX, finalPosY; // Координаты левого верхнего и правого нижнего углов поля лабиринта
-int dx[5] = {0, 0, 0, -1, 1}, dy[5] = {0, 1, -1, 0, 0}; // Массивы сдвигов
-char buffer[1000]; // Массив, используемый для вывода чисел на экран
-bool wasHere[SIDE][SIDE]; // Поле ячеек, посещенных алгоритмом поиска решения
-bool correctPath[SIDE][SIDE]; // Поле ячеек, составляющих решение(путь к выходу)
-bool isNewGame = 1, isGameGoingOn; // Началась ли новая игра; Идет ли процесс игры
+int eX = SIDE - 2, eY = SIDE - 2; //  ГЏГ®Г§ГЁГ¶ГЁГї ГїГ·ГҐГ©ГЄГЁ-ГґГЁГ­ГЁГёГ 
+int currX, currY; // ГЏГ®Г«Г®Г¦ГҐГ­ГЁГї ГЁГЈГ°Г®ГЄГ  Гў ГЇГ°Г®Г¶ГҐГ±Г±ГҐ ГЁГЈГ°Г»
+int computerAbility; // Г‘ГЇГ®Г±Г®ГЎГ­Г®Г±ГІГј ГЄГ®Г¬ГЇГјГѕГІГҐГ°Г  Гў Г¬ГЁГ­ГЁ-ГЁГЈГ°ГҐ (ГўГ»ГЎГЁГ°Г ГҐГІГ±Гї Г±Г«ГіГ·Г Г©Г­Г»Г¬ Г®ГЎГ°Г Г§Г®Г¬)
+int menuStatus; // Г‚ ГЄГ ГЄГ®Г¬ ГЇГіГ­ГЄГІГҐ Г¬ГҐГ­Гѕ Г­Г ГµГ®Г¤ГЁГІГ±Гї ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гј
+int collectedCoins, defeatedEnemies; // ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г±Г®ГЎГ°Г Г­Г­Г»Гµ Г¬Г®Г­ГҐГІ; ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЇГ®ГўГҐГ°Г¦ГҐГ­Г­Г»Гµ ГўГ°Г ГЈГ®Гў
+int initialPosX, initialPosY, finalPosX, finalPosY; // ГЉГ®Г®Г°Г¤ГЁГ­Г ГІГ» Г«ГҐГўГ®ГЈГ® ГўГҐГ°ГµГ­ГҐГЈГ® ГЁ ГЇГ°Г ГўГ®ГЈГ® Г­ГЁГ¦Г­ГҐГЈГ® ГіГЈГ«Г®Гў ГЇГ®Г«Гї Г«Г ГЎГЁГ°ГЁГ­ГІГ 
+int dx[5] = {0, 0, 0, -1, 1}, dy[5] = {0, 1, -1, 0, 0}; // ГЊГ Г±Г±ГЁГўГ» Г±Г¤ГўГЁГЈГ®Гў
+char buffer[1000]; // ГЊГ Г±Г±ГЁГў, ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГ¬Г»Г© Г¤Г«Гї ГўГ»ГўГ®Г¤Г  Г·ГЁГ±ГҐГ« Г­Г  ГЅГЄГ°Г Г­
+bool wasHere[SIDE][SIDE]; // ГЏГ®Г«ГҐ ГїГ·ГҐГҐГЄ, ГЇГ®Г±ГҐГ№ГҐГ­Г­Г»Гµ Г Г«ГЈГ®Г°ГЁГІГ¬Г®Г¬ ГЇГ®ГЁГ±ГЄГ  Г°ГҐГёГҐГ­ГЁГї
+bool correctPath[SIDE][SIDE]; // ГЏГ®Г«ГҐ ГїГ·ГҐГҐГЄ, Г±Г®Г±ГІГ ГўГ«ГїГѕГ№ГЁГµ Г°ГҐГёГҐГ­ГЁГҐ(ГЇГіГІГј ГЄ ГўГ»ГµГ®Г¤Гі)
+bool isNewGame = 1, isGameGoingOn; // ГЌГ Г·Г Г«Г Г±Гј Г«ГЁ Г­Г®ГўГ Гї ГЁГЈГ°Г ; Г€Г¤ГҐГІ Г«ГЁ ГЇГ°Г®Г¶ГҐГ±Г± ГЁГЈГ°Г»
 
-void loadFiles() // Загрузка необходимых изображений
+void loadFiles() // Г‡Г ГЈГ°ГіГ§ГЄГ  Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г»Гµ ГЁГ§Г®ГЎГ°Г Г¦ГҐГ­ГЁГ©
 {
    mainMenu = loadBMP("bmpImages/MainMenu.bmp");
    gameWindow = loadBMP("bmpImages/GameWindow.bmp");
@@ -61,10 +60,10 @@ void loadFiles() // Загрузка необходимых изображений
    abilities[2] = loadBMP("bmpImages/magicShield.bmp");
 }
 
-void createLevel() // Создание уровня
+void createLevel() // Г‘Г®Г§Г¤Г Г­ГЁГҐ ГіГ°Г®ГўГ­Гї
 {
-   initialPosX = 14; initialPosY = 27; // Координаты левого верхнего края лабиринта
-   finalPosX = (initialPosX + SIDE * 14), finalPosY = (initialPosX + SIDE * 14); // Координаты правого нижнего края лабиринта
+   initialPosX = 14; initialPosY = 27; // ГЉГ®Г®Г°Г¤ГЁГ­Г ГІГ» Г«ГҐГўГ®ГЈГ® ГўГҐГ°ГµГ­ГҐГЈГ® ГЄГ°Г Гї Г«Г ГЎГЁГ°ГЁГ­ГІГ 
+   finalPosX = (initialPosX + SIDE * 14), finalPosY = (initialPosX + SIDE * 14); // ГЉГ®Г®Г°Г¤ГЁГ­Г ГІГ» ГЇГ°Г ГўГ®ГЈГ® Г­ГЁГ¦Г­ГҐГЈГ® ГЄГ°Г Гї Г«Г ГЎГЁГ°ГЁГ­ГІГ 
    
    c[0][0].visitedByPlayer = 1;
    c[0][0].visited = 1;
@@ -75,7 +74,7 @@ void createLevel() // Создание уровня
    isGameGoingOn = 1;
 }
 
-int getNeighbours(int x, int y) // Выбор направления построения лабиринта
+int getNeighbours(int x, int y) // Г‚Г»ГЎГ®Г° Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГї ГЇГ®Г±ГІГ°Г®ГҐГ­ГЁГї Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 {
    vector <int> var;
    
@@ -97,10 +96,10 @@ int getNeighbours(int x, int y) // Выбор направления построения лабиринта
    return var[rand() % var.size()];
 }
 
-void generateMaze() // Генерация лабиринта ДФСом с использованием стека
+void generateMaze() // ГѓГҐГ­ГҐГ°Г Г¶ГЁГї Г«Г ГЎГЁГ°ГЁГ­ГІГ  Г„Г”Г‘Г®Г¬ Г± ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐГ¬ Г±ГІГҐГЄГ 
 {
    int currCellX = 0, currCellY = 0;
-   int coinsQuantity = 5 + rand() % 15, enemyQuantity = 5 + rand() % 10; // Количество монет и врагов в лабиринте
+   int coinsQuantity = 5 + rand() % 15, enemyQuantity = 5 + rand() % 10; // ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г¬Г®Г­ГҐГІ ГЁ ГўГ°Г ГЈГ®Гў Гў Г«Г ГЎГЁГ°ГЁГ­ГІГҐ
    bool flag = 0;
 
    while (1)
@@ -146,7 +145,7 @@ void generateMaze() // Генерация лабиринта ДФСом с использованием стека
    }
 }
 
-void drawMaze() // Отрисовка лабиринта
+void drawMaze() // ГЋГІГ°ГЁГ±Г®ГўГЄГ  Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 {
    putimage(0, 13, wallTexture, COPY_PUT);
    
@@ -175,7 +174,7 @@ void drawMaze() // Отрисовка лабиринта
       }
 }
 
-void restorePath() // Отрисовка пройденного пути
+void restorePath() // ГЋГІГ°ГЁГ±Г®ГўГЄГ  ГЇГ°Г®Г©Г¤ГҐГ­Г­Г®ГЈГ® ГЇГіГІГЁ
 {
    for (int i = 0; i < SIDE ;i++)
       for (int j = 0; j < SIDE ;j++)
@@ -186,7 +185,7 @@ void restorePath() // Отрисовка пройденного пути
          }
 }
 
-bool recursiveSolve(int x, int y) // Рекурсивный поиск выхода из лабиринта
+bool recursiveSolve(int x, int y) // ГђГҐГЄГіГ°Г±ГЁГўГ­Г»Г© ГЇГ®ГЁГ±ГЄ ГўГ»ГµГ®Г¤Г  ГЁГ§ Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 {
    if (x == eX && y == eY)
       return 1;
@@ -223,7 +222,7 @@ bool recursiveSolve(int x, int y) // Рекурсивный поиск выхода из лабиринта
    return 0;
 }
 
-void clearMaze() // Очистка всех структур и переменных для последующей генерации нового лабиринта
+void clearMaze() // ГЋГ·ГЁГ±ГІГЄГ  ГўГ±ГҐГµ Г±ГІГ°ГіГЄГІГіГ° ГЁ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»Гµ Г¤Г«Гї ГЇГ®Г±Г«ГҐГ¤ГіГѕГ№ГҐГ© ГЈГҐГ­ГҐГ°Г Г¶ГЁГЁ Г­Г®ГўГ®ГЈГ® Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 {
    for (int i = 0; i < SIDE ;i++)
       for (int j = 0; j < SIDE ;j++)
@@ -240,19 +239,19 @@ void clearMaze() // Очистка всех структур и переменных для последующей генерации
    isNewGame = 1;
 }
 
-void erasePlayer(int x, int y) // Пометить текущую ячейку посещенной
+void erasePlayer(int x, int y) // ГЏГ®Г¬ГҐГІГЁГІГј ГІГҐГЄГіГ№ГіГѕ ГїГ·ГҐГ©ГЄГі ГЇГ®Г±ГҐГ№ГҐГ­Г­Г®Г©
 {
    int xx = initialPosX + x * 14, yy = initialPosY + y * 14;
    putimage(xx, yy, playerPathTexture, COPY_PUT);
 }
 
-void drawPlayer(int x, int y) // Отрисовать игрока в текущей ячейке
+void drawPlayer(int x, int y) // ГЋГІГ°ГЁГ±Г®ГўГ ГІГј ГЁГЈГ°Г®ГЄГ  Гў ГІГҐГЄГіГ№ГҐГ© ГїГ·ГҐГ©ГЄГҐ
 {
    int xx = initialPosX + x * 14, yy = initialPosY + y * 14;
    putimage(xx, yy, playerTexture, COPY_PUT);
 }
 
-void initializeGame() // Инициализация игры
+void initializeGame() // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁГЈГ°Г»
 {
    setbkcolor(COLOR(35,35,35));
    putimage(0, 0, gameWindow, COPY_PUT);
@@ -274,7 +273,7 @@ void initializeGame() // Инициализация игры
    }
 }
 
-void drawSolution() // Отрисовка пути к выходу из лабиринта
+void drawSolution() // ГЋГІГ°ГЁГ±Г®ГўГЄГ  ГЇГіГІГЁ ГЄ ГўГ»ГµГ®Г¤Гі ГЁГ§ Г«Г ГЎГЁГ°ГЁГ­ГІГ 
 {
    for (int i = 0; i < SIDE ;i++)
       for (int j = 0; j < SIDE ;j++)
@@ -302,7 +301,7 @@ void drawSolution() // Отрисовка пути к выходу из лабиринта
       isGameGoingOn = 0;
 }
 
-void displayCounters() // Отрисовка количества собранных монет и поверженных врагов
+void displayCounters() // ГЋГІГ°ГЁГ±Г®ГўГЄГ  ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ  Г±Г®ГЎГ°Г Г­Г­Г»Гµ Г¬Г®Г­ГҐГІ ГЁ ГЇГ®ГўГҐГ°Г¦ГҐГ­Г­Г»Гµ ГўГ°Г ГЈГ®Гў
 {
    setbkcolor(COLOR(35,35,35));
    setcolor(WHITE);
@@ -320,9 +319,9 @@ void displayCounters() // Отрисовка количества собранных монет и поверженных вра
       outtextxy(669, 271, buffer);
 }
 
-void fight(int playerAbility, int computerAbility); // Мини-игра на основе игры "камень-ножницы-бумага"
+void fight(int playerAbility, int computerAbility); // ГЊГЁГ­ГЁ-ГЁГЈГ°Г  Г­Г  Г®Г±Г­Г®ГўГҐ ГЁГЈГ°Г» "ГЄГ Г¬ГҐГ­Гј-Г­Г®Г¦Г­ГЁГ¶Г»-ГЎГіГ¬Г ГЈГ "
 
-void wonInFight() // Действия в случае победы в мини-игре
+void wonInFight() // Г„ГҐГ©Г±ГІГўГЁГї Гў Г±Г«ГіГ·Г ГҐ ГЇГ®ГЎГҐГ¤Г» Гў Г¬ГЁГ­ГЁ-ГЁГЈГ°ГҐ
 {
    c[currX][currY].isEnemy = 0;
    defeatedEnemies++;
@@ -341,7 +340,7 @@ void wonInFight() // Действия в случае победы в мини-игре
    setvisualpage(1);
 }
 
-void lostInFight() // Действия в случае поражения в мини-игре
+void lostInFight() // Г„ГҐГ©Г±ГІГўГЁГї Гў Г±Г«ГіГ·Г ГҐ ГЇГ®Г°Г Г¦ГҐГ­ГЁГї Гў Г¬ГЁГ­ГЁ-ГЁГЈГ°ГҐ
 {
    putimage(0, 0, defeatScreen, COPY_PUT);
    delay(2000);
@@ -351,7 +350,7 @@ void lostInFight() // Действия в случае поражения в мини-игре
    isGameGoingOn = 0;
 }
 
-void foundAnEnemy() // Действия в случае обнаружения врага
+void foundAnEnemy() // Г„ГҐГ©Г±ГІГўГЁГї Гў Г±Г«ГіГ·Г ГҐ Г®ГЎГ­Г Г°ГіГ¦ГҐГ­ГЁГї ГўГ°Г ГЈГ 
 {
    setbkcolor(BLACK);
    setcolor(WHITE);
@@ -362,7 +361,7 @@ void foundAnEnemy() // Действия в случае обнаружения врага
 
    bool isPlayerAbilitySelected = 0;
    int selectedAbility;
-   clock_t end_time = clock() + 5 * CLOCKS_PER_SEC; // Таймер на 5 секунд
+   clock_t end_time = clock() + 5 * CLOCKS_PER_SEC; // Г’Г Г©Г¬ГҐГ° Г­Г  5 Г±ГҐГЄГіГ­Г¤
 
    while (clock() < end_time)
    {
@@ -393,7 +392,7 @@ void foundAnEnemy() // Действия в случае обнаружения врага
       lostInFight();
 }
 
-void drawInFight() // Действия в случае отсутствия победителя в мини-игре
+void drawInFight() // Г„ГҐГ©Г±ГІГўГЁГї Гў Г±Г«ГіГ·Г ГҐ Г®ГІГ±ГіГІГ±ГІГўГЁГї ГЇГ®ГЎГҐГ¤ГЁГІГҐГ«Гї Гў Г¬ГЁГ­ГЁ-ГЁГЈГ°ГҐ
 {
    putimage(0, 0, omtScreen, COPY_PUT);
    delay(1500);
@@ -401,7 +400,7 @@ void drawInFight() // Действия в случае отсутствия победителя в мини-игре
    foundAnEnemy();
 }
 
-void foundCoin() // Действия в случае обнаружения монеты
+void foundCoin() // Г„ГҐГ©Г±ГІГўГЁГї Гў Г±Г«ГіГ·Г ГҐ Г®ГЎГ­Г Г°ГіГ¦ГҐГ­ГЁГї Г¬Г®Г­ГҐГІГ»
 {
    c[currX][currY].isCoin = 0;
    collectedCoins++;
@@ -409,7 +408,7 @@ void foundCoin() // Действия в случае обнаружения монеты
    displayCounters();
 }
 
-void traceCell(int dir) // Перемещение игрока в указанном направлении и проверка текущей(новой) ячейки на наличие монеты или врага
+void traceCell(int dir) // ГЏГҐГ°ГҐГ¬ГҐГ№ГҐГ­ГЁГҐ ГЁГЈГ°Г®ГЄГ  Гў ГіГЄГ Г§Г Г­Г­Г®Г¬ Г­Г ГЇГ°Г ГўГ«ГҐГ­ГЁГЁ ГЁ ГЇГ°Г®ГўГҐГ°ГЄГ  ГІГҐГЄГіГ№ГҐГ©(Г­Г®ГўГ®Г©) ГїГ·ГҐГ©ГЄГЁ Г­Г  Г­Г Г«ГЁГ·ГЁГҐ Г¬Г®Г­ГҐГІГ» ГЁГ«ГЁ ГўГ°Г ГЈГ 
 {
    erasePlayer(currX, currY);
 
@@ -455,11 +454,11 @@ void traceCell(int dir) // Перемещение игрока в указанном направлении и проверка
    drawPlayer(currX, currY);
 }
 
-void gameProcess() // Функция отвечающая за процесс игры (Перемещение игрока. Кнопки для: выхода, начала новой игры, демонстрации решения)
+void gameProcess() // Г”ГіГ­ГЄГ¶ГЁГї Г®ГІГўГҐГ·Г ГѕГ№Г Гї Г§Г  ГЇГ°Г®Г¶ГҐГ±Г± ГЁГЈГ°Г» (ГЏГҐГ°ГҐГ¬ГҐГ№ГҐГ­ГЁГҐ ГЁГЈГ°Г®ГЄГ . ГЉГ­Г®ГЇГЄГЁ Г¤Г«Гї: ГўГ»ГµГ®Г¤Г , Г­Г Г·Г Г«Г  Г­Г®ГўГ®Г© ГЁГЈГ°Г», Г¤ГҐГ¬Г®Г­Г±ГІГ°Г Г¶ГЁГЁ Г°ГҐГёГҐГ­ГЁГї)
 {   
    while (isGameGoingOn)
    {
-      if (c[eX][eY].visitedByPlayer) // Если дошел до конца(выхода), продолжить игру с прохождения нового лабиринта с сохранением очков
+      if (c[eX][eY].visitedByPlayer) // Г…Г±Г«ГЁ Г¤Г®ГёГҐГ« Г¤Г® ГЄГ®Г­Г¶Г (ГўГ»ГµГ®Г¤Г ), ГЇГ°Г®Г¤Г®Г«Г¦ГЁГІГј ГЁГЈГ°Гі Г± ГЇГ°Г®ГµГ®Г¦Г¤ГҐГ­ГЁГї Г­Г®ГўГ®ГЈГ® Г«Г ГЎГЁГ°ГЁГ­ГІГ  Г± Г±Г®ГµГ°Г Г­ГҐГ­ГЁГҐГ¬ Г®Г·ГЄГ®Гў
       {
          clearMaze();
          initializeGame();
@@ -505,7 +504,7 @@ void gameProcess() // Функция отвечающая за процесс игры (Перемещение игрока. Кн
    }
 }
 
-int menuButtons(int currentStatus) // Выбор пункта меню
+int menuButtons(int currentStatus) // Г‚Г»ГЎГ®Г° ГЇГіГ­ГЄГІГ  Г¬ГҐГ­Гѕ
 {
    int x, y;
 
@@ -535,7 +534,7 @@ int menuButtons(int currentStatus) // Выбор пункта меню
    }
 }
 
-void showRules() // Переключение на окно с правилами игры
+void showRules() // ГЏГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г­Г  Г®ГЄГ­Г® Г± ГЇГ°Г ГўГЁГ«Г Г¬ГЁ ГЁГЈГ°Г»
 {
    int x, y;
    
@@ -556,7 +555,7 @@ void showRules() // Переключение на окно с правилами игры
    }
 }
 
-void showAbout() // Переключение на окно с информацией о игре
+void showAbout() // ГЏГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГҐ Г­Г  Г®ГЄГ­Г® Г± ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГҐГ© Г® ГЁГЈГ°ГҐ
 {
    int x, y;
    
